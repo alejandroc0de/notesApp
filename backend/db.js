@@ -29,7 +29,13 @@ class DataAccess{
   }
   //-------------------------------------------------
 
-
+  async insertOne (collection,data) {
+    try {
+      return await this.client.db("notas").collection(collection).insertOne(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   close(){
     return this.client.close()
