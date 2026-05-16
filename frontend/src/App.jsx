@@ -106,17 +106,17 @@ function App() {
   return (
     <>
       <div>
-        <h1 className='text-5xl p-3 font-bold text-center'>Notes App</h1>
+        <h1 className='text-5xl p-3 font-bold text-center hover:scale-110 duration-200'>Notes App</h1>
       </div>
 
       <div id='showNotes'>
         {recentNotes && <div>
           {recentNotes.map((item,index)=>(
-            <div className='bg-blue-300 p-2' key={index}>
+            <div className='bg-blue-200 p-2' key={index}>
               <p className='text-2xl font-bold'>{item.title}</p>
               <p>{item.nota}</p>
-              <button onClick={handleErase} value={item._id}>Borrar</button>
-              <button onClick={handleEdit}  value={item._id}>Edit</button>
+              <button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-110 duration-200' onClick={handleErase} value={item._id}>Erase</button>
+              <button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-110 duration-200 m-2' onClick={handleEdit}  value={item._id}>Edit</button>
             </div>
           ))}          
           </div>}
@@ -124,13 +124,13 @@ function App() {
 
       <div className='bg-green-200 p-5 flex flex-col' id='enterNotes'>
         <input value={title} onChange={handleTitle} type="text" placeholder='Enter a title' />
-        <label for="message" class=" block mb-2.5 text-sm font-medium text-heading">Your Note..</label>
+        <label for="message" className=" block text-sm font-medium text-heading">Your Note..</label>
         
         {!idNoteEditing&&<textarea value={note} onChange={handleNote} id="message" rows="4" class="m-5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand w-[90%] h-fit p-3.5 shadow-xs placeholder:text-body" placeholder="Write your thoughts here..."></textarea>}
         {idNoteEditing&&<textarea  value={note} onChange={handleNote} id="message" rows="4" class="m-5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand w-[90%] h-fit p-3.5 shadow-xs placeholder:text-body">{note}</textarea>}
         
-        {!idNoteEditing&&<button onClick={handleSubmit}>Submit</button>}
-        {idNoteEditing&&<button onClick={handleSubmitChanges}>Submit Changes</button>}
+        {!idNoteEditing&&<button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-102 duration-200' onClick={handleSubmit}>Submit</button>}
+        {idNoteEditing&&<button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-102 duration-200' onClick={handleSubmitChanges}>Submit Changes</button>}
       </div>
 
     </>
