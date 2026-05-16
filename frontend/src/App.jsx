@@ -10,7 +10,7 @@ function App() {
   const [title, setTitle] = useState("")
   const [idNoteEditing, setIdNoteEditing] = useState(null)
 
-  // function to load all the notes from the back 
+  // function to load all the notes from the back  --------------------
   useEffect( () => {
     async function getNotes() {
       try {
@@ -23,7 +23,9 @@ function App() {
     };
     getNotes()
   },[])
+  // --------------------------------------------------------------------
 
+  // Function to send a note to MongoDB. Post ---------------------------
   async function handleSubmit(){
     setTitle("")
     setNote("")
@@ -38,9 +40,11 @@ function App() {
       }
     } catch (error) {
       console.log(error)
-      
     }
   }
+  // ---------------------------------------------------------------------
+
+  // Function to send changed using Edit ---------------------------------
   async function handleSubmitChanges(){
     try {
       const result = await fetch (`${import.meta.env.VITE_API_URL}/notas`, {
@@ -58,7 +62,9 @@ function App() {
       console.log(error)
     }   
   }
+  // ----------------------------------------------------------------------
 
+  // Function to erase notes, DELETE method -------------------------------
   async function handleErase (event) {
     console.log(event.target.value)
     const idNote = event.target.value
@@ -75,7 +81,9 @@ function App() {
       console.log(error)
     }
   }
+  // -----------------------------------------------------------------------
 
+  // Function to edit a note, gets id, and sets the current note in the field to edit 
   async function handleEdit(event) {
     const idNote = event.target.value
     const noteToEdit = recentNotes.find((item) => item._id === idNote)
@@ -85,8 +93,9 @@ function App() {
       setIdNoteEditing(idNote)
       }
     }
+  // ------------------------------------------------------------------------
 
-
+  // Function to refresh ----------------------------------------------------
   async function refresh() {
     try {
       const result = await fetch(`${import.meta.env.VITE_API_URL}/notas`)
@@ -96,6 +105,8 @@ function App() {
       console.log(error)
     }
   };
+  // ------------------------------------------------------------------------
+
   function handleNote(event){
     setNote(event.target.value)
   }
@@ -132,7 +143,6 @@ function App() {
         {!idNoteEditing&&<button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-102 duration-200' onClick={handleSubmit}>Submit</button>}
         {idNoteEditing&&<button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-102 duration-200' onClick={handleSubmitChanges}>Submit Changes</button>}
       </div>
-
     </>
   )
 }

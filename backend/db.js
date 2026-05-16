@@ -60,7 +60,6 @@ class DataAccess{
   }
   // ---------------------------------------------------------
 
-
   close(){
     return this.client.close()
   }
