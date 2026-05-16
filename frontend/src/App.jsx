@@ -9,6 +9,8 @@ function App() {
   const [note, setNote] = useState("")
   const [title, setTitle] = useState("")
   const [idNoteEditing, setIdNoteEditing] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [searchResults, setSearchResults] = useState([])
 
   // function to load all the notes from the back  --------------------
   useEffect( () => {
@@ -95,12 +97,36 @@ function App() {
     }
   // ------------------------------------------------------------------------
 
+  // ------------------------------------------------------------------------
+  async function searchNotes() {
+    console.log(searchResults)
+    try {
+      const result = await fetch (`${import.meta.env.VITE_API_URL}/notas/findOne`, {
+        method : "POST",
+        headers : {"Content-Type":"application/json"},
+        body : JSON.stringify({term:searchTerm})
+      })
+      const data = await result.json()
+      if(data.Code == 201){
+        const data = {
+          nota: "Not a match found"
+        }
+        return setSearchResults([data])
+      }
+      setSearchResults([data.Result])
+      setSearchTerm("")
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  // ------------------------------------------------------------------------
+
   // Function to refresh ----------------------------------------------------
   async function refresh() {
     try {
       const result = await fetch(`${import.meta.env.VITE_API_URL}/notas`)
       const data = await result.json()
-      setRecentNotes(data)
+      console.log(data)
     } catch (error) {
       console.log(error)
     }
@@ -113,7 +139,13 @@ function App() {
   function handleTitle(event){
     setTitle(event.target.value)
   }
-
+  function handleSearch(event){
+    setSearchTerm(event.target.value)
+    if(event.target.value == ""){
+      setSearchResults([]);
+    }
+  }
+  
   return (
     <>
       <div>
@@ -142,6 +174,19 @@ function App() {
         
         {!idNoteEditing&&<button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-102 duration-200' onClick={handleSubmit}>Submit</button>}
         {idNoteEditing&&<button className='bg-gray-300 p-2 rounded-2xl font-bold hover:scale-102 duration-200' onClick={handleSubmitChanges}>Submit Changes</button>}
+      </div>
+
+
+      <div className='bg-gray-50 text-center m-3'>
+        <input className='border-2 rounded-2xl m-1 p-2' type="text" value={searchTerm} onChange={handleSearch} />
+        <button className='p-2 border-2 rounded-2xl' onClick={searchNotes}>Search Notes</button>
+        {searchResults && <div>
+           {searchResults.map((item,index)=> (
+            <div key={index}>
+              <p>Note Found : {item.nota}</p>
+            </div>
+           ))}
+           </div>}
       </div>
     </>
   )

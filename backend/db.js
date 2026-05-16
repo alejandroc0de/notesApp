@@ -60,6 +60,14 @@ class DataAccess{
   }
   // ---------------------------------------------------------
 
+  async findOne(collection,searchTerm){
+    try {
+      return await this.client.db("notas").collection(collection).findOne({title:searchTerm})
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   close(){
     return this.client.close()
   }
