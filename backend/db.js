@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config();
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 class DataAccess{
   constructor(){
@@ -36,6 +36,19 @@ class DataAccess{
       console.log(error)
     }
   }
+
+  // Delete items from db -----------------------------
+  
+  async deleteOne(collection,id){
+    const queryId = {_id : new ObjectId(id)}
+    try {
+      return await this.client.db("notas").collection(collection).deleteOne(queryId)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
 
   close(){
     return this.client.close()
