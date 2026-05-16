@@ -127,6 +127,7 @@ function App() {
       const result = await fetch(`${import.meta.env.VITE_API_URL}/notas`)
       const data = await result.json()
       console.log(data)
+      setRecentNotes(data)
     } catch (error) {
       console.log(error)
     }
