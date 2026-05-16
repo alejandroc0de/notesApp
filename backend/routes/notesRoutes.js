@@ -20,7 +20,6 @@ router.post("/", async (req,res)=> {
             nota : nota
         }
         const result = await dataAccess.insertOne("notas",notaObject)
-        console.log(result)
         if(result.acknowledged){
             return res.status(201).json({message: "Note added properly"})
         }
@@ -33,9 +32,22 @@ router.delete("/", async (req,res) => {
     try {
         const id = req.body.id
         const result = await dataAccess.deleteOne("notas",id)
-        console.log(result)
         if(result.deletedCount>0){
             return res.status(200).json({message: "Note deleted"})
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+router.put("/", async (req,res) => {
+    try {
+        const id = req.body.id
+        const title = req.body.title
+        const nota = req.body.nota
+        const result = await dataAccess.updateOne("notas",id,nota)
+        if(result.modifiedCount>0){
+            return res.status(200).json({message:"Note Updated"})
         }
     } catch (error) {
         console.log(error)

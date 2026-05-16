@@ -48,6 +48,17 @@ class DataAccess{
     }
   }
 
+  // Update items on the DB ---------------------------------
+
+  async updateOne(collection,id,nota){
+    const queryId = {_id : new ObjectId(id)}
+    try {
+      return await this.client.db("notas").collection(collection).updateOne(queryId,{$set:{nota:nota}})
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  // ---------------------------------------------------------
 
 
   close(){

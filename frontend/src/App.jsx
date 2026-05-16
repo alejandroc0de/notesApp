@@ -7,6 +7,8 @@ function App() {
 
   const [recentNotes, setRecentNotes] = useState([])
   const [note, setNote] = useState("")
+  const [title, setTitle] = useState("")
+  const [idNoteEditing, setIdNoteEditing] = useState(null)
 
   // function to load all the notes from the back 
   useEffect( () => {
@@ -22,39 +24,114 @@ function App() {
     getNotes()
   },[])
 
-  function handleSubmit(){
-    console.log(note)
+  async function handleSubmit(){
+    setTitle("")
+    setNote("")
+    try {
+      const result = await fetch (`${import.meta.env.VITE_API_URL}/notas`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({title: title, nota: note })
+      })
+      if(result.ok){
+        refresh()
+      }
+    } catch (error) {
+      console.log(error)
+      
+    }
+  }
+  async function handleSubmitChanges(){
+    try {
+      const result = await fetch (`${import.meta.env.VITE_API_URL}/notas`, {
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({title:title,nota:note, id:idNoteEditing})
+      })
+      setTitle("")
+      setNote("")
+      setIdNoteEditing(null)
+      if(result.ok){
+        refresh()
+      }
+    } catch (error) {
+      console.log(error)
+    }   
   }
 
+  async function handleErase (event) {
+    console.log(event.target.value)
+    const idNote = event.target.value
+    try {
+      const result = await fetch (`${import.meta.env.VITE_API_URL}/notas`, {
+        method: "DELETE",
+        headers : {"Content-Type": "application/json"},
+        body : JSON.stringify({id:idNote})
+      })
+      if(result.ok){
+        refresh()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function handleEdit(event) {
+    const idNote = event.target.value
+    const noteToEdit = recentNotes.find((item) => item._id === idNote)
+    if(noteToEdit){
+      setNote(noteToEdit.nota)
+      setTitle(noteToEdit.title)
+      setIdNoteEditing(idNote)
+      }
+    }
+
+
+  async function refresh() {
+    try {
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/notas`)
+      const data = await result.json()
+      setRecentNotes(data)
+    } catch (error) {
+      console.log(error)
+    }
+  };
   function handleNote(event){
     setNote(event.target.value)
+  }
+  function handleTitle(event){
+    setTitle(event.target.value)
   }
 
   return (
     <>
       <div>
-        <h1 className='text-4xl'>Notes App</h1>
+        <h1 className='text-5xl p-3 font-bold text-center'>Notes App</h1>
       </div>
 
       <div id='showNotes'>
         {recentNotes && <div>
           {recentNotes.map((item,index)=>(
-            <div key={index}>
-              <p>{item.Nota}</p>
+            <div className='bg-blue-300 p-2' key={index}>
+              <p className='text-2xl font-bold'>{item.title}</p>
+              <p>{item.nota}</p>
+              <button onClick={handleErase} value={item._id}>Borrar</button>
+              <button onClick={handleEdit}  value={item._id}>Edit</button>
             </div>
           ))}          
           </div>}
       </div>
 
       <div className='bg-green-200 p-5 flex flex-col' id='enterNotes'>
+        <input value={title} onChange={handleTitle} type="text" placeholder='Enter a title' />
         <label for="message" class=" block mb-2.5 text-sm font-medium text-heading">Your Note..</label>
-        <textarea value={note} onChange={handleNote} id="message" rows="4" class="m-5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand w-[90%] h-fit p-3.5 shadow-xs placeholder:text-body" placeholder="Write your thoughts here..."></textarea>
-        <button onClick={handleSubmit}>Submit</button>
+        
+        {!idNoteEditing&&<textarea value={note} onChange={handleNote} id="message" rows="4" class="m-5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand w-[90%] h-fit p-3.5 shadow-xs placeholder:text-body" placeholder="Write your thoughts here..."></textarea>}
+        {idNoteEditing&&<textarea  value={note} onChange={handleNote} id="message" rows="4" class="m-5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand w-[90%] h-fit p-3.5 shadow-xs placeholder:text-body">{note}</textarea>}
+        
+        {!idNoteEditing&&<button onClick={handleSubmit}>Submit</button>}
+        {idNoteEditing&&<button onClick={handleSubmitChanges}>Submit Changes</button>}
       </div>
-
-
-
-
 
     </>
   )
