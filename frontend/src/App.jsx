@@ -111,6 +111,7 @@ function App() {
         const data = {
           nota: "Not a match found"
         }
+        setSearchTerm("")
         return setSearchResults([data])
       }
       setSearchResults([data.Result])

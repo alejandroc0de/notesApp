@@ -57,8 +57,6 @@ router.put("/", async (req,res) => {
 router.post("/findOne", async (req,res) => {
     try {
         const searchTerm = req.body.term
-        console.log(searchTerm)
-        console.log(typeof(searchTerm))
         const result = await dataAccess.findOne("notas",searchTerm)
         console.log(result)
         if(result){
